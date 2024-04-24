@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Clock</title>
+{% endblock %}
+
+{% block body %}
+<h1>Clock</h1>
+<p id="clock">Here will be date|time</p>
+
+<a href="/add_alarm">Add Alarm</a>
+
+{% if alarms|length < 1 %}
+<h4>There are no alarms set. Set one above.</h4>
+{% else %}
+
+<table>
+    <tr>
+        <th>Alarm</th>
+        <th>Actions</th>
+    </tr>
+    <tr>
+        {% for alarm in alarms %}
+        <td>{{ alarm.content }}</td>
+        <td>
+            <a onclick="snooze()">Snooze</a>
+            <a href="/delete_alarm/{{ alarm.id }}">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+
+<script>
+    var clock = document.getElementById("clock");
+    const alarmSound = new Audio("{{url_for('static', filename='audio/analog_alarm.mp3')}}")
+
+    setInterval(() => {
+        fetch("{{ url_for('time_feed') }}")
+        .then(response => {
+            response.text().then(t => {clock.innerHTML = t})
+            
+        });
+    }, 1000);
+
+    function checkAlarm(alarm) {
+        if ( Date.parse("{{url_for('time_feed')}}" == Date.parse(alarm)))
+            playAlarm()
+    }
+
+    function playAlarm() {
+        alarmSound.load()
+        alarmSound.play()
+    }
+
+    function snooze() {
+        alarmSound.pause()
+    }
+
+
+</script>
+{% endblock %}

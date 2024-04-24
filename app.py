@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import Flask, render_template, url_for, request, redirect
+from flask import Flask, render_template, url_for, request, redirect, Response
 from flask_sqlalchemy import SQLAlchemy
 
 # TODO look for web host for app
@@ -13,6 +13,13 @@ class Todo(db.Model):
     content = db.Column(db.String(200), nullable=False)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
     
+    def __repr__(self):
+        return '<Task %r>' % self.id
+    
+class Alarm(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.String(17), nullable=False)
+
     def __repr__(self):
         return '<Task %r>' % self.id
         
@@ -63,5 +70,43 @@ def update(id):
     else:
         return render_template('update.html', task=task)
 
+@app.route('/clock', methods=['GET'])
+def clock():
+    alarms = Alarm.query.all()
+    return render_template('clock.html', alarms=alarms)
+
+@app.route('/time_feed')
+def time_feed():
+    def generate():
+        yield datetime.now().strftime("%Y-%m-%dT%H:%M:%S")  # return also will work
+    return Response(generate(), mimetype='text')
+
+@app.route('/add_alarm', methods = ['GET','POST'])
+def add_alarm():
+    if request.method == "POST":
+        alarm_content = request.form['content']
+        new_alarm = Alarm(content=alarm_content)
+
+        try:
+            db.session.add(new_alarm)
+            db.session.commit()
+            return redirect('/clock')
+        except Exception as e:
+            print("The error is ",e)
+            
+    else:
+        return render_template('add_alarm.html')
+    
+@app.route('/delete_alarm/<int:id>')
+def delete_alarm(id):
+    target_alarm = Alarm.query.get_or_404(id)
+
+    try:
+        db.session.delete(target_alarm)
+        db.session.commit()
+        return redirect('/clock')
+    except:
+        return "There was an issue deleting that alarm"
+    
 if __name__ == "__main__":
     app.run(debug=True)

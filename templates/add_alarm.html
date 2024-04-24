@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Add Alarm</title>
+{% endblock %}
+
+{% block body %}
+<div class="content">
+    <h1>Set a time for your new Alarm</h1>
+
+    <form action="/add_alarm" method="POST">
+        <input type="datetime-local" name="content" id="content">
+        <input type="submit" value="Add Alarm">
+    </form>
+</div>
+{% endblock %}
