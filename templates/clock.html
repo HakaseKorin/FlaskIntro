@@ -9,6 +9,10 @@
 <p id="clock">Here will be date|time</p>
 
 <a href="/add_alarm">Add Alarm</a>
+<div>
+    <button onclick="snooze()">Clear Alarm</button>
+    <button onclick="playAlarm()">play alarm sound</button>
+</div>
 
 {% if alarms|length < 1 %}
 <h4>There are no alarms set. Set one above.</h4>
@@ -23,7 +27,7 @@
         {% for alarm in alarms %}
         <td>{{ alarm.content }}</td>
         <td>
-            <a onclick="snooze()">Snooze</a>
+            <button onclick="setAlarm('{{ alarm.content }}')">Set Alarm</button>
             <a href="/delete_alarm/{{ alarm.id }}">Delete</a>
         </td>
     </tr>
@@ -34,18 +38,26 @@
 <script>
     var clock = document.getElementById("clock");
     const alarmSound = new Audio("{{url_for('static', filename='audio/analog_alarm.mp3')}}")
+    var current_alarm
 
     setInterval(() => {
         fetch("{{ url_for('time_feed') }}")
         .then(response => {
-            response.text().then(t => {clock.innerHTML = t})
-            
+            response.text().then(t => {
+                clock.innerHTML = t
+                checkAlarm(t)
+            })
         });
     }, 1000);
 
-    function checkAlarm(alarm) {
-        if ( Date.parse("{{url_for('time_feed')}}" == Date.parse(alarm)))
+    function checkAlarm(current_time) {
+        if ( Date.parse(current_time) == Date.parse(current_alarm))
             playAlarm()
+        console.log("checking alarm" + ", current time: " + current_time + ", current alarm: " + current_alarm)
+    }
+
+    function setAlarm(alarm) {
+        current_alarm = alarm
     }
 
     function playAlarm() {
@@ -54,6 +66,7 @@
     }
 
     function snooze() {
+        current_alarm = null
         alarmSound.pause()
     }
 

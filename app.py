@@ -78,7 +78,7 @@ def clock():
 @app.route('/time_feed')
 def time_feed():
     def generate():
-        yield datetime.now().strftime("%Y-%m-%dT%H:%M:%S")  # return also will work
+        yield datetime.now().strftime("%Y-%m-%dT%H:%M")  # return also will work
     return Response(generate(), mimetype='text')
 
 @app.route('/add_alarm', methods = ['GET','POST'])
@@ -108,5 +108,11 @@ def delete_alarm(id):
     except:
         return "There was an issue deleting that alarm"
     
+@app.route('/get_alarm/<int:id>')
+def get_alarm(id):
+    target_alarm = Alarm.query.get_or_404(id)
+    return target_alarm
+
+
 if __name__ == "__main__":
     app.run(debug=True)
