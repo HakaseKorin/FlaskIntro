@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import Flask, render_template, url_for, request, redirect, Response
+from flask import Flask, render_template, url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 
 # TODO look for web host for app
