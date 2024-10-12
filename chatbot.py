@@ -69,9 +69,7 @@ pairs = [
     ],
 ]
 
-#default message at the start of chat
-print("Hello, I am your chat-bot. I am here to have a simple conversation ")
-#Create Chat Bot
-chat = Chat(pairs, reflections)
-#Start conversation
-chat.converse()
+def start_chat(user_input):
+    chat = Chat(pairs, reflections)
+    response = chat.respond(user_input)
+    return response

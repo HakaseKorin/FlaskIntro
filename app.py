@@ -1,6 +1,7 @@
 from datetime import datetime
 from flask import Flask, render_template, url_for, request, redirect, Response
 from flask_sqlalchemy import SQLAlchemy
+from chatbot import start_chat 
 
 # TODO look for web host for app
 
@@ -20,8 +21,13 @@ class Todo(db.Model):
 #with app.app_context():
 #       db.create_all()
 
-@app.route('/chatbot')
+@app.route('/chatbot', methods=['GET','POST'])
 def chatbot():
+    user_input = ""
+    if request.method == 'POST':
+        user_input = request.form['user_input'].lower()
+        bot_response = start_chat(user_input)
+        return render_template('chatbot.html', bot_response=bot_response)
     return render_template('chatbot.html')
 
 @app.route('/', methods=['POST','GET'])
