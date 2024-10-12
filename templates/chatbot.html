@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block head %}
+<title>Chat Bot</title>
+<div>
+    <h1>Chat Bot</h1>
+</div>
+{% endblock %}
+{% block body %}
+<div>
+    <form method="post">
+        You: <input style="text-align: center;"
+                type="text"
+                name="user_input"
+                placeholder="Enter text here to start a conversation.."
+                size="80">
+    </form>
+</div>
+<div>
+    <form method="post">
+        Bot: <input style="text-align: center;"
+                type="text"
+                name="dialog_box"
+                size="80"
+                value="{{ bot_response }}"
+    </form>
+</div>
+{% endblock %}

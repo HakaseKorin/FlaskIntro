@@ -20,6 +20,10 @@ class Todo(db.Model):
 #with app.app_context():
 #       db.create_all()
 
+@app.route('/chatbot')
+def chatbot():
+    return render_template('chatbot.html')
+
 @app.route('/', methods=['POST','GET'])
 def index():
     if request.method == 'POST':
